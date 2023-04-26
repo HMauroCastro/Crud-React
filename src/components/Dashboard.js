@@ -55,8 +55,7 @@ class Dashboard extends React.Component {
                     </div>
                     <br />
                     <h4>Usuarios</h4>
-                    <br />
-                    <table className="table table-responsive table-striped">
+                    <table className="table table-responsive table-hover">
                         <thead>
                             <tr>
                                 <th scope="col">Id</th>
@@ -91,10 +90,8 @@ class Dashboard extends React.Component {
 
                 <div className='container'>
                     <br /><br />
-                    <br />
                     <h4>Cargos</h4>
-                    <br />
-                    <table className="table table-responsive table-striped">
+                    <table className="table table-responsive table-hover">
                         <thead>
                             <tr>
                                 <th scope="col">Id</th>

@@ -43,7 +43,6 @@ class Login extends React.Component {
                     this.setState({ error: true, errorMsg: "response.data.result.error_msj" })
                 }
             }).catch(error => {
-                console.log(error);
                 this.setState({ error: true, errorMsg: "Error" })
             
             })

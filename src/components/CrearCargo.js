@@ -11,7 +11,7 @@ class CrearCargo extends React.Component {
 
     state = {
         form: {
-            "nombre": ""
+            "nombre": ''
         },
         error: false,
         errorMsg: ""
@@ -31,16 +31,18 @@ class CrearCargo extends React.Component {
     }
 
     crearCargo = () => {
-        let url = Apiurl + "cargos";
-        axios.post(url, this.state.form)
+        let bodyFormData = new FormData();
+        bodyFormData.append('nombre', this.state.form.nombre);
+        axios({
+            method: "post",
+            url: Apiurl + "cargos",
+            data: bodyFormData,
+            headers: { "Content-Type": "multipart/form-data" },
+        })
             .then(response => {
-                if (response.data.status === "ok") {
-                    this.props.history.push("/dashboard");
-                } else {
-                    this.setState({ error: true, errorMsg: "response.data.result.error_msj" })
-                }
+                this.props.history.push("/dashboard");
+
             }).catch(error => {
-                console.log(error);
                 this.setState({ error: true, errorMsg: "Error" })
             })
     }
@@ -58,7 +60,7 @@ class CrearCargo extends React.Component {
                     <h4>Crear Cargo</h4>
                     <br />
                     <form className='form-horizontal' onSubmit={this.manejadorSubmit}>
-                        <div className="row">
+                        <div className="col-md-10 control-label">
                             <label className="col-md-2 control-label" style={{ fontWeight: 'bold' }}>Nombre</label>
                             <input type="text2" className="form-control" name="nombre" placeholder="Ingresa el nombre del cargo"
                                 onChange={this.manejadorChange}

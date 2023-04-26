@@ -45,11 +45,7 @@ class EditarCargo extends React.Component {
         let url = Apiurl + "cargos/" + cargoId;
         axios.delete(url)
             .then(response => {
-                if (response.data.status === "ok") {
-                    this.props.history.push("/dashboard");
-                } else {
-                    this.setState({ error: true, errorMsg: "Error" })
-                }
+                this.props.history.push("/dashboard");
             }).catch(error => {
                 this.setState({ error: true, errorMsg: "Error" })
             })
@@ -58,14 +54,18 @@ class EditarCargo extends React.Component {
 
     actualizar = () => {
         let cargoId = this.props.match.params.id;
-        let url = Apiurl + "cargos/" + cargoId;
-        axios.put(url, this.state.form)
+        let bodyFormData = new FormData();
+
+        bodyFormData.append('nombre', this.state.form.nombre);
+        axios({
+            method: "put",
+            url: Apiurl + "cargos/" + cargoId,
+            data: bodyFormData,
+            headers: { "Content-Type": "multipart/form-data" },
+        })
             .then(response => {
-                if (response.data.status === "ok") {
-                    this.props.history.push("/dashboard");
-                } else {
-                    this.setState({ error: true, errorMsg: "Error" })
-                }
+                this.props.history.push("/dashboard");
+
             }).catch(error => {
                 this.setState({ error: true, errorMsg: "Error" })
             })
@@ -84,7 +84,7 @@ class EditarCargo extends React.Component {
                     <h4>Editar Cargo</h4>
                     <br />
                     <form className='form-horizontal' onSubmit={this.manejadorSubmit}>
-                        <div className="row">
+                        <div className="col-md-10 control-label">
                             <label className="col-md-2 control-label" style={{ fontWeight: 'bold' }}>Id</label>
                             <input type="text2" className="form-control input-sm" name="id" placeholder="Id" disabled
                                 value={form.id}
@@ -92,7 +92,7 @@ class EditarCargo extends React.Component {
                             />
                         </div>
 
-                        <div className="row">
+                        <div className="col-md-10 control-label">
                             <label className="col-md-2 control-label" style={{ fontWeight: 'bold' }}>Nombre</label>
                             <input type="text2" className="form-control" name="nombre" placeholder="Ingresa nombre cargo"
                                 value={form.nombre}

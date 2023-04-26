@@ -19,6 +19,7 @@ class CrearUsuario extends React.Component {
             "salario": "",
             "cargo": ""
         },
+        cargos: [],
         error: false,
         errorMsg: ""
     }
@@ -36,19 +37,42 @@ class CrearUsuario extends React.Component {
         })
     }
 
-    crearUsuario = () => {
-        let url = Apiurl + "usuarios";
-        axios.post(url, this.state.form)
+    componentDidMount() {
+        let url = Apiurl + "cargos"
+        axios.get(url)
             .then(response => {
-                if (response.data.status === "ok") {
-                    this.props.history.push("/dashboard");
-                } else {
-                    this.setState({ error: true, errorMsg: "response.data.result.error_msj" })
-                }
-            }).catch(error => {
-                console.log(error);
-                this.setState({ error: true, errorMsg: "Error" })
+                this.setState({
+                    cargos: response.data
+                })
             })
+    }
+
+    crearUsuario = () => {
+        let bodyFormData = new FormData();
+        bodyFormData.append('nombre', this.state.form.nombre);
+        bodyFormData.append('apellido', this.state.form.apellido);
+        bodyFormData.append('dni', this.state.form.dni);
+        bodyFormData.append('cedula', this.state.form.cedula);
+        bodyFormData.append('direccion', this.state.form.direccion);
+        bodyFormData.append('salario', this.state.form.salario);
+        bodyFormData.append('cargo', this.state.form.cargo);
+
+        if (this.state.form.salario < 0) {
+            this.setState({ error: true, errorMsg: "El salario no puede ser negativo" })
+        } else {
+            axios({
+                method: "post",
+                url: Apiurl + "usuarios",
+                data: bodyFormData,
+                headers: { "Content-Type": "multipart/form-data" },
+            })
+                .then(response => {
+                    this.props.history.push("/dashboard");
+
+                }).catch(error => {
+                    this.setState({ error: true, errorMsg: "Error" })
+                })
+        }
     }
 
     salir = () => {
@@ -57,6 +81,7 @@ class CrearUsuario extends React.Component {
 
 
     render() {
+
         return (
             <React.Fragment >
                 <div className='container'>
@@ -64,51 +89,54 @@ class CrearUsuario extends React.Component {
                     <h4>Crear Usuario</h4>
                     <br />
                     <form className='form-horizontal' onSubmit={this.manejadorSubmit}>
-                        <div className="row">
+                        <div className="col-md-10 control-label">
                             <label className="col-md-2 control-label" style={{ fontWeight: 'bold' }}>Nombre</label>
                             <input type="text2" className="form-control" name="nombre" placeholder="Ingresa tu nombre"
                                 onChange={this.manejadorChange}
                             />
                         </div>
-                        <div className="row">
+                        <div className="col-md-10 control-label">
                             <label className="col-md-2 control-label" style={{ fontWeight: 'bold' }}>Apellido</label>
                             <input type="text2" className="form-control" name="apellido" placeholder="Ingresa tu apellido"
                                 onChange={this.manejadorChange}
                             />
                         </div>
-                        <div className="row">
+                        <div className="col-md-10 control-label">
                             <label className="col-md-2 control-label" style={{ fontWeight: 'bold' }}>Dni</label>
                             <input type="text2" className="form-control" name="dni" placeholder="Ingresa tu dni"
                                 onChange={this.manejadorChange}
                             />
                         </div>
-                        <div className="row">
+                        <div className="col-md-10 control-label">
                             <label className="col-md-2 control-label" style={{ fontWeight: 'bold' }}>Cedula</label>
                             <input type="text2" className="form-control" name="cedula" placeholder="Ingresa tu cédula"
                                 onChange={this.manejadorChange}
                             />
                         </div>
-                        <div className="row">
+                        <div className="col-md-10 control-label">
                             <label className="col-md-2 control-label" style={{ fontWeight: 'bold' }}>Dirección</label>
                             <input type="text2" className="form-control" name="direccion" placeholder="Ingresa tu dirección"
                                 onChange={this.manejadorChange}
                             />
                         </div>
-                        <div className="row">
+                        <div className="col-md-10 control-label">
                             <label className="col-md-2 control-label" style={{ fontWeight: 'bold' }}>Salario</label>
-                            <input type="text2" className="form-control" name="salario" placeholder="Ingresa tu salario"
+                            <input min="0" type="Number" className="form-control" name="salario" placeholder="Ingresa tu salario"
                                 onChange={this.manejadorChange}
                             />
                         </div>
 
                         <div className="col-md-5 control-label">
                             <label className="col-md-2 control-label" style={{ fontWeight: 'bold' }}>Cargo</label>
-                            <select className="form-control" name="Select1">
-                                <option>1</option>
-                                <option>2</option>
-                                <option>3</option>
-                                <option>4</option>
-                                <option>5</option>
+                            <select className="form-control" name="cargo" onChange={this.manejadorChange}>
+                                <option value>Seleccione una opción</option>
+                                {this.state.cargos.map((value, index) => {
+                                    return (
+                                        <option key={index} value={value.id}>
+                                            {value.nombre}
+                                        </option>
+                                    )
+                                })}
                             </select>
                         </div>
 
@@ -120,7 +148,7 @@ class CrearUsuario extends React.Component {
                         </div>
 
                         {this.state.error === true &&
-                            <div className="col-md-5 control-label">
+                            <div className="col-md-10 control-label">
                                 <div className="alert alert-danger" role="alert">
                                     {this.state.errorMsg}
                                 </div>
